@@ -20,6 +20,7 @@
 
 #include <ptrash.h>
 #include <ptrashdb.h>
+#include <libgen.h>
 
 extern char *tdb;
 extern int opterr, optind;
