@@ -167,6 +167,23 @@ build_path (const char *dir, const char *file)
     return (strtemp);
 }
 
+char *
+build_trashdb_path (const char *dir, const char *file)
+{
+    assert ((dir != NULL) && (file != NULL));
+
+    int dl = strlen (dir), fl = strlen (file);
+    char *strtemp = calloc ((dl + fl + 2), sizeof (char));
+
+    if (strtemp != NULL)
+    {
+        strncpy (strtemp, dir, dl);
+        strcat (strtemp, file);
+    }
+
+    return (strtemp);
+}
+
 
 /*
  * dst_path: build a destination path for the file to be moved.
@@ -378,7 +395,11 @@ main (int argc, char *argv[])
             fnm = calloc (pmax, sizeof (char));
             realpath (argv[n], fnm);
         }
-        if (lstat (fnm, &stat_buf) == 0)
+        
+        tdb = build_path (tdb, basename (argv[n]));
+	tdb = build_trashdb_path(tdb, ".trashinfo");
+        
+	if (lstat (fnm, &stat_buf) == 0)
         {
             /* 
              * If a file is under ~/.trash and restore(-r) is NOT used,
@@ -420,10 +441,11 @@ init_move (void)
 
     pw = getpwuid (getuid ());
     trsh = build_path (pw->pw_dir, ".local/share/Trash/files");
-    tdb  = build_path (trsh, "../info/.trashdb");
+    tdb  = build_path (trsh, "../info");
     perm = S_IRWXU;
-    if ((create_dir (trsh) == -1)
-        || (open (tdb, O_CREAT, S_IRUSR|S_IWUSR) < 0))
+    //if ((create_dir (trsh) == -1)
+    //    || (open (tdb, O_CREAT, S_IRUSR|S_IWUSR) < 0))
+    if (create_dir (trsh) == -1)
     {
         warnx ("initialisation error");
         return -1;

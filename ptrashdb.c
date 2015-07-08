@@ -245,8 +245,13 @@ t_write (void)
         cur = db.head;
         while (cur != NULL)
         {
+	    fputs ("[Trash Info]", fp);
+	    fputc ('\n', fp);
+	    fputs ("Path=", fp);
             fputs (cur->path, fp);
             fputc ('\n', fp);
+	    fputs ("DeletionDate=2015-07-07T18:11:49", fp);
+	    fputc ('\n', fp);
             cur = cur->next;
         }
     }
